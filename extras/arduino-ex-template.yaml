@@ -1,0 +1,121 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: 36bff6c29af64692839d077febfc7079
+      name: 'Templates/Network devices'
+  templates:
+    - uuid: e141ea1b3c704f9a8a8051ae462e4945
+      template: arduino-ex
+      name: arduino-ex
+      groups:
+        - name: 'Templates/Network devices'
+      items:
+        - uuid: 23488bf1b05b4ab3952b49ea5047a979
+          name: 'Zabbix agent ping'
+          key: agent.ping
+          history: 7d
+          description: 'The agent always returns 1 for this item. It could be used in combination with nodata() for availability check.'
+          valuemap:
+            name: 'Zabbix agent ping status'
+          tags:
+            - tag: component
+              value: system
+        - uuid: b3248612f4a74ed7ae837511c4ecdd54
+          name: 'Version of Zabbix agent running'
+          key: agent.version
+          delay: 1h
+          history: 7d
+          value_type: CHAR
+          tags:
+            - tag: component
+              value: application
+        - uuid: c619ccee68334275b5b8047048a9bca0
+          name: 'System name'
+          key: system.hostname
+          delay: 1h
+          history: 2w
+          value_type: CHAR
+          description: 'The host name of the system.'
+          inventory_link: NAME
+          tags:
+            - tag: component
+              value: system
+          triggers:
+            - uuid: de3ebc459773457f8bcbd3cd82b8d9c2
+              expression: 'change(/arduino-ex/system.hostname) and length(last(/arduino-ex/system.hostname))>0'
+              name: 'System name has changed'
+              event_name: 'System name has changed (new name: {ITEM.VALUE})'
+              priority: INFO
+              description: 'The name of the system has changed. `Ack` to close the problem manually.'
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+                - tag: scope
+                  value: security
+        - uuid: 7c1c9053815342f2be7aae299cbedaee
+          name: 'System uptime'
+          key: system.uptime
+          delay: 30s
+          history: 2w
+          trends: '0'
+          units: uptime
+          description: 'The system uptime expressed in the following format:"N days, hh:mm:ss".'
+          tags:
+            - tag: component
+              value: system
+          triggers:
+            - uuid: 17f89706044c4b6b947378d08e53576c
+              expression: last(/arduino-ex/system.uptime)<10m
+              name: 'has been restarted'
+              event_name: '{HOST.NAME} has been restarted (uptime < 10m)'
+              priority: WARNING
+              description: 'The host uptime is less than 10 minutes'
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: f46f308d3a9442a3b33a517db2c70f8d
+          name: 'Zabbix agent availability'
+          type: INTERNAL
+          key: 'zabbix[host,agent,available]'
+          history: 7d
+          description: 'Monitoring the availability status of the agent.'
+          valuemap:
+            name: zabbix.host.available
+          tags:
+            - tag: component
+              value: system
+          triggers:
+            - uuid: 596f5832fb644a489fea685ef026f337
+              expression: 'max(/arduino-ex/zabbix[host,agent,available],{$AGENT.TIMEOUT})=0'
+              name: 'Zabbix agent is not available'
+              event_name: 'Zabbix agent is not available (for {$AGENT.TIMEOUT})'
+              priority: AVERAGE
+              description: 'For passive only agents, host availability is used with {$AGENT.TIMEOUT} as time threshold.'
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: availability
+      tags:
+        - tag: class
+          value: arduino
+      macros:
+        - macro: '{$AGENT.TIMEOUT}'
+          value: 3m
+          description: 'Timeout after which agent is considered unavailable. Works only for agents reachable from Zabbix server/proxy (passive mode).'
+      valuemaps:
+        - uuid: 70ce0b04ff5949d4ae535b596e6e4343
+          name: zabbix.host.available
+          mappings:
+            - value: '0'
+              newvalue: 'not available'
+            - value: '1'
+              newvalue: available
+            - value: '2'
+              newvalue: unknown
+        - uuid: b9556c908f3d4f4f80ae669537174724
+          name: 'Zabbix agent ping status'
+          mappings:
+            - value: '1'
+              newvalue: Up

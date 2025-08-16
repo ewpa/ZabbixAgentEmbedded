@@ -1,0 +1,35 @@
+# KEYWORD_TOKENTYPE
+###################
+
+# Datatypes (KEYWORD1)
+
+# Methods and Functions (KEYWORD2)
+send_zabbix_autoreg KEYWORD2
+zabbix_agent_begin KEYWORD2
+zabbix_agent_loop KEYWORD2
+
+# Structures (KEYWORD3)
+
+# Constants (LITERAL1)
+ZBX_VERSION_MAJOR LITERAL1
+ZBX_VERSION_MINOR LITERAL1
+ZBX_VERSION_PATCH LITERAL1
+ZBX_JSON_BUFF_SIZE LITERAL1
+
+# Variables (LITERAL2)
+
+# REFERENCE_LINK
+################
+
+# RSYNTAXTEXTAREA_TOKENTYPE
+###########################
+
+# RESERVED_WORD
+
+# RESERVED_WORD_2
+
+# DATA_TYPE
+
+# PREPROCESSOR
+
+# LITERAL_BOOLEAN
