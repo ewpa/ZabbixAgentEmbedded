@@ -23,7 +23,7 @@ Example Zabbix Server configuration
   4. Choose _Add_.
 
 ### Import pre-configured template
-1. Navigate: _Data collection >> Teamplates_.
+1. Navigate: _Data collection >> Templates_.
 2. Choose _Import_.
 3. Browse and select the file _extras/arduino-ex-template.yaml_.
 4. Choose _Import_.
