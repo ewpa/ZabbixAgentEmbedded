@@ -8,8 +8,8 @@
 #pragma once
 
 #define ZBX_VERSION_MAJOR 1
-#define ZBX_VERSION_MINOR 0
-#define ZBX_VERSION_PATCH 3
+#define ZBX_VERSION_MINOR 1
+#define ZBX_VERSION_PATCH 0
 
 //#define DEBUG_ZBX 1
 #ifndef ZBX_JSON_BUFF_SIZE

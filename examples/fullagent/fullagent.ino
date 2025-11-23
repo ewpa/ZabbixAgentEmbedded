@@ -34,6 +34,16 @@ void zabbixActiveTask(void *pvParameter)
   }
 }
 
+// https://arduino.stackexchange.com/questions/12587/how-can-i-handle-the-millis-rollover
+uint64_t millis64()
+{
+  static uint32_t low32, high32;
+  uint32_t new_low32 = millis();
+  if (new_low32 < low32) high32++;
+  low32 = new_low32;
+  return (uint64_t) high32 << 32 | low32;
+}
+
 int zabbixPassiveItemUpdated(const String key, String &new_value)
 {
   Serial.println("Item update request");
@@ -42,7 +52,7 @@ int zabbixPassiveItemUpdated(const String key, String &new_value)
 
   int success = 1;
   if (key.equals("system.uptime"))
-    new_value = String(millis()/1000);
+    new_value = String(millis64()/1000);
   else if (key.equals("agent.ping"))
     new_value = "1";
   else if (key.equals("system.hostname"))
