@@ -2,7 +2,7 @@
   zbxagent.cpp  Embedded Arduino Zabbix Agent.
 
   * Created 3rd August 2025.
-  * Copyright (C) 2025 Ewan Parker.
+  * Copyright (C) 2025–2026 Ewan Parker.
 */
 
 #include "zbxagent.h"
@@ -77,7 +77,9 @@ void send_zabbix_response(char *k, String v)
   debug_println(datalen);
 }
 
-void send_zabbix_active_checks(const char *zabbix_server, uint16_t zabbix_port, const char *ip, String host, String host_metadata)
+int send_zabbix_active_checks
+(const char *zabbix_server, uint16_t zabbix_port, const char *ip, String host,
+String host_metadata)
 {
   int c = out_client.connect(zabbix_server, zabbix_port);
   if (c)
@@ -126,13 +128,22 @@ void send_zabbix_active_checks(const char *zabbix_server, uint16_t zabbix_port, 
     debug_println(bytes);
     debug_println(buffer);
     out_client.stop();
+    return 0;
   }
-  else debug_println("Active checks failed");
+  else
+  {
+    debug_println("Active checks failed");
+    return -1;
+  }
 }
 
-void send_zabbix_autoreg(String zabbix_server, uint16_t zabbix_port, IPAddress ip, String host, String host_metadata)
+int send_zabbix_autoreg
+(String zabbix_server, uint16_t zabbix_port, IPAddress ip, String host,
+String host_metadata)
 {
-  send_zabbix_active_checks(zabbix_server.c_str(), zabbix_port, ip.toString().c_str(), host, host_metadata);
+  return send_zabbix_active_checks(
+    zabbix_server.c_str(), zabbix_port, ip.toString().c_str(), host,
+    host_metadata);
 }
 
 void zabbix_agent_begin(int (*cb)(const String key, String &new_value))
